@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from 'express'
+require("dotenv").config()
 
 const app: Application = express()
 
@@ -9,4 +10,4 @@ app.get("/", (req: Request, res: Response): void => {
     res.render("index")
 })
 
-app.listen(5000)
+app.listen(process.env.PORT || 5000)
