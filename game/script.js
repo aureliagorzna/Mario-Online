@@ -1,3 +1,26 @@
+// Sometimes HTML doesnt want to render so i gotta do it this way
+const canvasElement = document.createElement("canvas");
+const canvasWrapper = document.createElement("div");
+canvasWrapper.className = "canvas-wrapper";
+canvasWrapper.appendChild(canvasElement);
+const instructionsWrapper = document.createElement("div");
+instructionsWrapper.className = "instructions-wrapper";
+const divLeft = document.createElement("div");
+divLeft.className = "instruction-move";
+divLeft.id = "move-left";
+divLeft.innerText = "Left";
+const divRight = document.createElement("div");
+divRight.className = "instruction-move";
+divRight.id = "move-right";
+divRight.innerText = "Right";
+const divJump = document.createElement("div");
+divJump.className = "instruction-jump";
+divJump.innerText = "Jump";
+instructionsWrapper.appendChild(divLeft);
+instructionsWrapper.appendChild(divRight);
+instructionsWrapper.appendChild(divJump);
+document.body.appendChild(canvasWrapper);
+document.body.appendChild(instructionsWrapper);
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 //////////// <--------> ////////////>- ROUNDING FUNCTION -<//////////// <--------> ////////////
