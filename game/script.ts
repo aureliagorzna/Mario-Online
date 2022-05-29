@@ -1,34 +1,3 @@
-// Sometimes HTML doesnt want to render so i gotta do it this way
-
-const canvasElement: HTMLCanvasElement = document.createElement("canvas")
-const canvasWrapper: HTMLDivElement = document.createElement("div")
-canvasWrapper.className = "canvas-wrapper"
-canvasWrapper.appendChild(canvasElement)
-
-const instructionsWrapper: HTMLDivElement = document.createElement("div")
-instructionsWrapper.className = "instructions-wrapper"
-
-const divLeft: HTMLDivElement = document.createElement("div")
-divLeft.className = "instruction-move"
-divLeft.id = "move-left"
-divLeft.innerText = "Left"
-
-const divRight: HTMLDivElement = document.createElement("div")
-divRight.className = "instruction-move"
-divRight.id = "move-right"
-divRight.innerText = "Right"
-
-const divJump: HTMLDivElement = document.createElement("div")
-divJump.className = "instruction-jump"
-divJump.innerText = "Jump"
-
-instructionsWrapper.appendChild(divLeft)
-instructionsWrapper.appendChild(divRight)
-instructionsWrapper.appendChild(divJump)
-
-document.body.appendChild(canvasWrapper)
-document.body.appendChild(instructionsWrapper)
-
 const canvas: HTMLCanvasElement = document.querySelector("canvas")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")
 
@@ -419,8 +388,6 @@ class Misc extends Entity implements MiscProperties {
         this.gravityActive = false
     }
 }
-
-const player: Player = new Player(mario, { y: 343, x: 32 }, speed)
 
 //////////// <--------> ////////////>- TEXT DRAWING -<//////////// <--------> ////////////
 
@@ -1237,14 +1204,14 @@ const jumpButton: HTMLDivElement = document.querySelector(".instruction-jump")
 const moveLeftButton: HTMLDivElement = document.querySelector("#move-left")
 const moveRightButton: HTMLDivElement = document.querySelector("#move-right")
 
-if (jumpButton != null) jumpButton.addEventListener("click", (): void => {
+jumpButton.addEventListener("click", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     if (!playerEntity.falling) doJump(playerEntity)
 })
 
-if (moveLeftButton != null) moveLeftButton.addEventListener("mousedown", (): void => {
+moveLeftButton.addEventListener("mousedown", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
@@ -1254,7 +1221,7 @@ if (moveLeftButton != null) moveLeftButton.addEventListener("mousedown", (): voi
 
 })
 
-if (moveRightButton != null) moveRightButton.addEventListener("mousedown", (): void => {
+moveRightButton.addEventListener("mousedown", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
@@ -1264,28 +1231,28 @@ if (moveRightButton != null) moveRightButton.addEventListener("mousedown", (): v
 
 })
 
-if (moveLeftButton != null) moveLeftButton.addEventListener("mouseup", (): void => {
+moveLeftButton.addEventListener("mouseup", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     playerEntity.walking1 = false
 })
 
-if (moveRightButton != null) moveRightButton.addEventListener("mouseup", (): void => {
+moveRightButton.addEventListener("mouseup", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     playerEntity.walking2 = false
 })
 
-if (moveLeftButton != null) moveLeftButton.addEventListener("mouseleave", (): void => {
+moveLeftButton.addEventListener("mouseleave", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     playerEntity.walking1 = false
 })
 
-if (moveRightButton != null) moveRightButton.addEventListener("mouseleave", (): void => {
+moveRightButton.addEventListener("mouseleave", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
@@ -1312,6 +1279,8 @@ const run: VoidFunction = (): void => {
     nextLevel()
     entities.push(player)
 }
+
+const player: Player = new Player(mario, { y: 343, x: 32 }, speed)
 
 run()
 render()

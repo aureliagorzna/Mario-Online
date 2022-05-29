@@ -1,26 +1,3 @@
-// Sometimes HTML doesnt want to render so i gotta do it this way
-const canvasElement = document.createElement("canvas");
-const canvasWrapper = document.createElement("div");
-canvasWrapper.className = "canvas-wrapper";
-canvasWrapper.appendChild(canvasElement);
-const instructionsWrapper = document.createElement("div");
-instructionsWrapper.className = "instructions-wrapper";
-const divLeft = document.createElement("div");
-divLeft.className = "instruction-move";
-divLeft.id = "move-left";
-divLeft.innerText = "Left";
-const divRight = document.createElement("div");
-divRight.className = "instruction-move";
-divRight.id = "move-right";
-divRight.innerText = "Right";
-const divJump = document.createElement("div");
-divJump.className = "instruction-jump";
-divJump.innerText = "Jump";
-instructionsWrapper.appendChild(divLeft);
-instructionsWrapper.appendChild(divRight);
-instructionsWrapper.appendChild(divJump);
-document.body.appendChild(canvasWrapper);
-document.body.appendChild(instructionsWrapper);
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 //////////// <--------> ////////////>- ROUNDING FUNCTION -<//////////// <--------> ////////////
@@ -313,7 +290,6 @@ class Misc extends Entity {
         this.gravityActive = false;
     }
 }
-const player = new Player(mario, { y: 343, x: 32 }, speed);
 //////////// <--------> ////////////>- TEXT DRAWING -<//////////// <--------> ////////////
 const text = () => {
     ctx.textAlign = "left";
@@ -1085,62 +1061,55 @@ window.addEventListener("touchend", (e) => {
 const jumpButton = document.querySelector(".instruction-jump");
 const moveLeftButton = document.querySelector("#move-left");
 const moveRightButton = document.querySelector("#move-right");
-if (jumpButton != null)
-    jumpButton.addEventListener("click", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        if (!playerEntity.falling)
-            doJump(playerEntity);
-    });
-if (moveLeftButton != null)
-    moveLeftButton.addEventListener("mousedown", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        if (playerEntity.lastDir)
-            turn(playerEntity.matrix);
-        playerEntity.walking1 = true;
-        playerEntity.lastDir = false;
-    });
-if (moveRightButton != null)
-    moveRightButton.addEventListener("mousedown", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        if (!playerEntity.lastDir)
-            turn(playerEntity.matrix);
-        playerEntity.walking2 = true;
-        playerEntity.lastDir = true;
-    });
-if (moveLeftButton != null)
-    moveLeftButton.addEventListener("mouseup", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        playerEntity.walking1 = false;
-    });
-if (moveRightButton != null)
-    moveRightButton.addEventListener("mouseup", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        playerEntity.walking2 = false;
-    });
-if (moveLeftButton != null)
-    moveLeftButton.addEventListener("mouseleave", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        playerEntity.walking1 = false;
-    });
-if (moveRightButton != null)
-    moveRightButton.addEventListener("mouseleave", () => {
-        const playerEntity = Entity.getEntity(player);
-        if (runningTimer == null)
-            runningTimer = setInterval(time, 100);
-        playerEntity.walking2 = false;
-    });
+jumpButton.addEventListener("click", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    if (!playerEntity.falling)
+        doJump(playerEntity);
+});
+moveLeftButton.addEventListener("mousedown", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    if (playerEntity.lastDir)
+        turn(playerEntity.matrix);
+    playerEntity.walking1 = true;
+    playerEntity.lastDir = false;
+});
+moveRightButton.addEventListener("mousedown", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    if (!playerEntity.lastDir)
+        turn(playerEntity.matrix);
+    playerEntity.walking2 = true;
+    playerEntity.lastDir = true;
+});
+moveLeftButton.addEventListener("mouseup", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking1 = false;
+});
+moveRightButton.addEventListener("mouseup", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking2 = false;
+});
+moveLeftButton.addEventListener("mouseleave", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking1 = false;
+});
+moveRightButton.addEventListener("mouseleave", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking2 = false;
+});
 //////////// <--------> ////////////>- GENERAL RENDERING FUNCTION -<//////////// <--------> ////////////
 const render = () => {
     fillBackground();
@@ -1157,6 +1126,7 @@ const run = () => {
     nextLevel();
     entities.push(player);
 };
+const player = new Player(mario, { y: 343, x: 32 }, speed);
 run();
 render();
 setInterval(fpsCounterReset, 1000);
