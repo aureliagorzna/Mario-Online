@@ -1061,13 +1061,14 @@ window.addEventListener("touchend", (e) => {
 const jumpButton = document.querySelector(".instruction-jump");
 const moveLeftButton = document.querySelector("#move-left");
 const moveRightButton = document.querySelector("#move-right");
-jumpButton.addEventListener("click", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    if (!playerEntity.falling)
-        doJump(playerEntity);
-});
+if (jumpButton != null)
+    jumpButton.addEventListener("click", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        if (!playerEntity.falling)
+            doJump(playerEntity);
+    });
 moveLeftButton.addEventListener("mousedown", () => {
     const playerEntity = Entity.getEntity(player);
     if (runningTimer == null)

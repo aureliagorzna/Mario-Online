@@ -1204,7 +1204,7 @@ const jumpButton: HTMLDivElement = document.querySelector(".instruction-jump")
 const moveLeftButton: HTMLDivElement = document.querySelector("#move-left")
 const moveRightButton: HTMLDivElement = document.querySelector("#move-right")
 
-jumpButton.addEventListener("click", (): void => {
+if (jumpButton != null) jumpButton.addEventListener("click", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
