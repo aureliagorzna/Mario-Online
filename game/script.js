@@ -1,6 +1,18 @@
-"use strict";
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+//////////// <--------> ////////////>- ROUNDING FUNCTION -<//////////// <--------> ////////////
+const round = (number) => {
+    const numberString = number.toString();
+    const dotIndex = numberString.indexOf(".");
+    const intLength = numberString.substring(0, dotIndex).length;
+    let roundedString;
+    if (numberString.length > intLength + 3) {
+        roundedString = numberString.substring(0, intLength + 3);
+    }
+    else
+        roundedString = numberString;
+    return parseFloat(roundedString);
+};
 const mario = [
     [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -150,7 +162,6 @@ const heart = [
     [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
 ];
-const width = 1200; /* Width of game window in pixels */
 let level = 1; /* Starting level */
 const targetFps = 120; /* Target FPS - limiting this number may improve the performance */
 const gameRefreshRate = 120; /* Game Refresh Rate - increasing this number will speed the game up */
@@ -160,15 +171,21 @@ const speed = 2; /* Speed - default player speed */
 const jump = 2; /* Jump - default player jump measured in blocks */
 const bossLife = 4; /* Boss life - sets the amount of life of the boss */
 let entities = [];
-const zoom = 2;
-const scale = 15;
-const displayWidth = width;
-const displayHeight = width * 0.625;
-const arenaWidth = Math.ceil((displayWidth / zoom) / scale);
-const arenaHeight = Math.ceil((displayHeight / zoom) / scale);
-canvas.width = displayWidth;
-canvas.height = displayHeight;
-ctx.scale(zoom, zoom);
+const WIDTH = 1200;
+let ZOOM = round(window.innerWidth / 850);
+let DISPLAY_WIDTH = WIDTH * ZOOM / 2;
+let DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
+const SCALE = 15;
+const ARENA_WIDTH = Math.ceil((DISPLAY_WIDTH / ZOOM) / SCALE);
+const ARENA_HEIGHT = Math.ceil((DISPLAY_HEIGHT / ZOOM) / SCALE);
+canvas.width = DISPLAY_WIDTH;
+canvas.height = DISPLAY_HEIGHT;
+ctx.scale(ZOOM, ZOOM);
+window.addEventListener("resize", () => {
+    ZOOM = round(window.innerWidth / 850);
+    DISPLAY_WIDTH = WIDTH * ZOOM / 2;
+    DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
+});
 //////////// <--------> ////////////>- COLOR PALETTE -<//////////// <--------> ////////////
 const modelColor = [
     "",
@@ -328,7 +345,7 @@ const createArena = (w, h) => {
     }
     return matrix;
 };
-const arena = createArena(arenaWidth, arenaHeight);
+const arena = createArena(ARENA_WIDTH, ARENA_HEIGHT);
 //////////// <--------> ////////////>- DRAWING ENTITY -<//////////// <--------> ////////////
 const drawEntity = (matrix, pos) => {
     matrix.forEach((row, y) => {
@@ -346,7 +363,7 @@ const drawArena = () => {
         row.forEach((value, x) => {
             if (value !== 0) {
                 ctx.fillStyle = arenaColor[value];
-                ctx.fillRect(x * scale, y * scale, scale - 0.1, scale - 0.1);
+                ctx.fillRect(x * SCALE, y * SCALE, SCALE - 0.1, SCALE - 0.1);
             }
         });
     });
@@ -364,7 +381,7 @@ const turn = (model) => {
 };
 //////////// <--------> ////////////>- POSITION TO BLOCK REFFERENCE -<//////////// <--------> ////////////
 const positionsY = [];
-for (let i = 0; i <= arenaHeight * scale; i += scale) {
+for (let i = 0; i <= ARENA_HEIGHT * SCALE; i += SCALE) {
     positionsY.push(i);
 }
 const getPosY = (y) => {
@@ -375,11 +392,11 @@ const getPosY = (y) => {
     }
 };
 const posMapY = new Map();
-for (let i = 0; i < arenaHeight * scale; i++) {
+for (let i = 0; i < ARENA_HEIGHT * SCALE; i++) {
     posMapY.set(i, getPosY(i));
 }
 const positionsX = [];
-for (let i = 0; i <= arenaWidth * scale; i += scale) {
+for (let i = 0; i <= ARENA_WIDTH * SCALE; i += SCALE) {
     positionsX.push(i);
 }
 const getPosX = (x) => {
@@ -390,7 +407,7 @@ const getPosX = (x) => {
     }
 };
 const posMapX = new Map();
-for (let i = 0; i < arenaWidth * scale; i++) {
+for (let i = 0; i < ARENA_WIDTH * SCALE; i++) {
     posMapX.set(i, getPosX(i));
 }
 //////////// <--------> ////////////>- COLLISION CHECK -<//////////// <--------> ////////////
@@ -401,7 +418,7 @@ const collide = (pos) => {
         if (arena[offsetY][offsetX] !== 0)
             return true;
     }
-    catch (_a) {
+    catch {
         entities.forEach((e) => {
             if (e.pos.y >= 285) {
                 if (e instanceof Enemy)
@@ -422,7 +439,7 @@ const fixedWalkingCollision = (dir, matrix) => {
 };
 const fixedScale = (dir) => {
     if (dir > 0)
-        return scale - 1;
+        return SCALE - 1;
     if (dir < 0)
         return -2;
 };
@@ -444,7 +461,7 @@ const gravity = () => {
         if (!collide({ y: entity.pos.y + entity.matrix.length, x: entity.pos.x })) {
             if (!entity.gravityActive)
                 return;
-            if (entity.lastpos.x === 0 && !collide({ y: entity.pos.y + scale, x: entity.pos.x - 3 + scale })) {
+            if (entity.lastpos.x === 0 && !collide({ y: entity.pos.y + SCALE, x: entity.pos.x - 3 + SCALE })) {
                 entity.pos.y++;
                 entity.falling = true;
             }
@@ -488,7 +505,7 @@ const clearJump = (entity) => {
 const doJump = (entity) => {
     if (entity == null)
         return;
-    const endJump = jump * Math.floor(scale * 0.75);
+    const endJump = jump * Math.floor(SCALE * 0.75);
     entity.falling = true;
     if (entity.jumpCounter === 0) {
         entity.gravityActive = false;
@@ -503,7 +520,7 @@ const doJump = (entity) => {
     if (entity.jumpCounter > 0)
         entity.timeout = setTimeout(() => doJump(entity), jumpFrequency);
     if (!collide({ y: entity.pos.y - 2, x: entity.pos.x })
-        && !collide({ y: entity.pos.y - 2, x: entity.pos.x + scale - 4 })) {
+        && !collide({ y: entity.pos.y - 2, x: entity.pos.x + SCALE - 4 })) {
         entity.pos.y -= 2;
     }
     else
@@ -521,7 +538,7 @@ const entityMove = (dir, entity) => {
         return;
     }
     if (!collide({ y: entity.pos.y, x: entity.pos.x + fixedWalkingCollision(dir, entity.matrix) })) {
-        if (entity.pos.x >= arenaWidth * scale - entity.matrix[0].length - 2) {
+        if (entity.pos.x >= ARENA_WIDTH * SCALE - entity.matrix[0].length - 2) {
             entity.pos.x--;
             if (entity instanceof Enemy) {
                 entity.direction = !entity.direction;
@@ -547,8 +564,8 @@ const entityMove = (dir, entity) => {
             && entity.pos.x >= player.pos.x - 80 && entity.pos.x <= player.pos.x + 80 + player.matrix[0].length
             && entity.pos.y <= player.pos.y + 40 && entity.pos.y >= player.pos.y - 40)
             doJump(entity);
-        if (dir < 0 && collide({ y: entity.pos.y + scale, x: entity.pos.x })
-            && !collide({ y: entity.pos.y + scale, x: entity.pos.x - scale })) {
+        if (dir < 0 && collide({ y: entity.pos.y + SCALE, x: entity.pos.x })
+            && !collide({ y: entity.pos.y + SCALE, x: entity.pos.x - SCALE })) {
             entity.lastpos.x = entity.pos.x;
             entity.lastpos.y = entity.pos.y;
         }
@@ -673,12 +690,12 @@ const gen = (x1, x2, y1, y2, color) => {
         return;
     if (x1 < 0)
         x1 = 0;
-    if (x2 > arenaWidth)
-        x2 = arenaWidth;
+    if (x2 > ARENA_WIDTH)
+        x2 = ARENA_WIDTH;
     if (y1 < 0)
         y1 = 0;
-    if (y2 > arenaHeight)
-        y2 = arenaHeight;
+    if (y2 > ARENA_HEIGHT)
+        y2 = ARENA_HEIGHT;
     for (let y = y1; y < y2; y++) {
         for (let x = x1; x < x2; x++) {
             if (color != null) {
@@ -692,23 +709,23 @@ const gen = (x1, x2, y1, y2, color) => {
 //////////// <--------> ////////////>- FLOOR HOLES GENERATOR -<//////////// <--------> ////////////
 const hole = (x1, x2) => {
     for (let x = x1; x < x2; x++) {
-        arena[arenaHeight - 1][x] = 0;
+        arena[ARENA_HEIGHT - 1][x] = 0;
     }
 };
 //////////// <--------> ////////////>- FLOOR GENERATOR -<//////////// <--------> ////////////
-const floor = () => gen(0, arenaWidth, arenaHeight - 1, arenaHeight);
+const floor = () => gen(0, ARENA_WIDTH, ARENA_HEIGHT - 1, ARENA_HEIGHT);
 //////////// <--------> ////////////>- REMOVING ARENA BLOCKS -<//////////// <--------> ////////////
 const pass = (x1, x2, y1, y2) => {
     if (x1 > x2 || y1 > y2)
         return;
     if (x1 < 0)
         x1 = 0;
-    if (x2 > arenaWidth)
-        x2 = arenaWidth;
+    if (x2 > ARENA_WIDTH)
+        x2 = ARENA_WIDTH;
     if (y1 < 0)
         y1 = 0;
-    if (y2 > arenaHeight)
-        y2 = arenaHeight;
+    if (y2 > ARENA_HEIGHT)
+        y2 = ARENA_HEIGHT;
     for (let y = y1; y < y2; y++) {
         for (let x = x1; x < x2; x++) {
             arena[y][x] = 0;
@@ -891,7 +908,7 @@ const nextLevel = (lost) => {
 };
 //////////// <--------> ////////////>- CHECK NEXT LEVEL CONDITIONS -<//////////// <--------> ////////////
 const levelCheck = () => {
-    const border = arenaWidth * scale - player.matrix[0].length - player.speed;
+    const border = ARENA_WIDTH * SCALE - player.matrix[0].length - player.speed;
     if (level === 1 && player.pos.x >= border) {
         level++;
         nextLevel();
@@ -996,6 +1013,15 @@ window.addEventListener("keyup", (e) => {
         playerEntity.walking1 = false;
     if (e.key === "d")
         playerEntity.walking2 = false;
+});
+canvas.addEventListener("touchstart", (e) => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    for (let i = 0; i < e.touches.length; i++) {
+        if (e.touches[i].clientX > canvas.width / 2 && !playerEntity.falling)
+            doJump(playerEntity);
+    }
 });
 //////////// <--------> ////////////>- GENERAL RENDERING FUNCTION -<//////////// <--------> ////////////
 const render = () => {

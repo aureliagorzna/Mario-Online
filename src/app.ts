@@ -10,4 +10,4 @@ app.get("/", (req: Request, res: Response): void => {
     res.render("index")
 })
 
-app.listen(process.env.PORT || 5000)
+app.listen(process.env.PORT || 5100)

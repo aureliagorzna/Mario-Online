@@ -1,6 +1,21 @@
 const canvas: HTMLCanvasElement = document.querySelector("canvas")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")
 
+//////////// <--------> ////////////>- ROUNDING FUNCTION -<//////////// <--------> ////////////
+
+const round = (number: number): number => {
+    const numberString: string = number.toString()
+    const dotIndex: number = numberString.indexOf(".")
+    const intLength: number = numberString.substring(0, dotIndex).length
+    let roundedString: string
+
+    if (numberString.length > intLength + 3) {
+        roundedString = numberString.substring(0, intLength + 3)
+    } else roundedString = numberString
+
+    return parseFloat(roundedString)
+}
+
 const mario: number[][] = [
     [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -158,27 +173,34 @@ const heart: number[][] = [
     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
 ]
 
-const width: number = 1200 /* Width of game window in pixels */
-
-let level: number = 1 /* Starting level */
-const targetFps: number = 120 /* Target FPS - limiting this number may improve the performance */
-const gameRefreshRate: number = 120 /* Game Refresh Rate - increasing this number will speed the game up */
-const background: string = "#feefd2" /* Background color - sets the background color with given rgb/hsl/hex code */
-const gravityForce: number = 10 /* Gravity Force - indicates the falling rate */
-const speed: number = 2 /* Speed - default player speed */
-const jump: number = 2 /* Jump - default player jump measured in blocks */
-const bossLife: number = 4 /* Boss life - sets the amount of life of the boss */
+let level: number = 1                   /* Starting level */
+const targetFps: number = 120           /* Target FPS - limiting this number may improve the performance */
+const gameRefreshRate: number = 120     /* Game Refresh Rate - increasing this number will speed the game up */
+const background: string = "#feefd2"    /* Background color - sets the background color with given rgb/hsl/hex code */
+const gravityForce: number = 10         /* Gravity Force - indicates the falling rate */
+const speed: number = 2                 /* Speed - default player speed */
+const jump: number = 2                  /* Jump - default player jump measured in blocks */
+const bossLife: number = 4              /* Boss life - sets the amount of life of the boss */
 let entities: Entity[] = []
 
-const zoom: number = 2
-const scale: number = 15
-const displayWidth: number = width
-const displayHeight: number = width * 0.625
-const arenaWidth: number = Math.ceil((displayWidth / zoom) / scale)
-const arenaHeight: number = Math.ceil((displayHeight / zoom) / scale)
-canvas.width = displayWidth
-canvas.height = displayHeight
-ctx.scale(zoom, zoom)
+const WIDTH: number = 1200
+let ZOOM: number = round(window.innerWidth / 850)
+let DISPLAY_WIDTH: number = WIDTH * ZOOM / 2
+let DISPLAY_HEIGHT: number = WIDTH * 0.625 * ZOOM / 2
+const SCALE: number = 15
+
+const ARENA_WIDTH: number = Math.ceil((DISPLAY_WIDTH / ZOOM) / SCALE)
+const ARENA_HEIGHT: number = Math.ceil((DISPLAY_HEIGHT / ZOOM) / SCALE)
+
+canvas.width = DISPLAY_WIDTH
+canvas.height = DISPLAY_HEIGHT
+ctx.scale(ZOOM, ZOOM)
+
+window.addEventListener("resize", () => {
+    ZOOM = round(window.innerWidth / 850)
+    DISPLAY_WIDTH = WIDTH * ZOOM / 2
+    DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2
+})
 
 //////////// <--------> ////////////>- COLOR PALETTE -<//////////// <--------> ////////////
 
@@ -216,7 +238,7 @@ interface EntityProperties {
     gravityActive: boolean
     jumpCounter: number
     lastpos: Position
-    timeout: any
+    timeout: number
     speed: number
     turned: boolean
     remove: VoidFunction
@@ -258,7 +280,7 @@ class Entity implements EntityProperties {
     public gravityActive: boolean
     public jumpCounter: number
     public lastpos: Position
-    public timeout: any
+    public timeout: number
     public speed: number
     public turned: boolean
     public remove: VoidFunction
@@ -366,7 +388,7 @@ const text: VoidFunction = (): void => {
     ctx.font = "10px Comic Sans MS"
     ctx.fillStyle = "purple"
     ctx.fillText("FPS: " + fps, 10, 15)
-    
+
     let displayTimer: string = `${timer / 10}`
     for (let i = 60; i < 60 * (timer / 10); i += 60) {
         if (Math.floor(timer / 10) >= i && Math.floor(timer / 10) < i + 60) {
@@ -425,7 +447,7 @@ const createArena = (w: number, h: number): number[][] => {
     }
     return matrix
 }
-const arena: number[][] = createArena(arenaWidth, arenaHeight)
+const arena: number[][] = createArena(ARENA_WIDTH, ARENA_HEIGHT)
 
 //////////// <--------> ////////////>- DRAWING ENTITY -<//////////// <--------> ////////////
 
@@ -447,7 +469,7 @@ const drawArena: VoidFunction = (): void => {
         row.forEach((value: number, x: number): void => {
             if (value !== 0) {
                 ctx.fillStyle = arenaColor[value]
-                ctx.fillRect(x * scale, y * scale, scale - 0.1, scale - 0.1)
+                ctx.fillRect(x * SCALE, y * SCALE, SCALE - 0.1, SCALE - 0.1)
             }
         })
     })
@@ -471,7 +493,7 @@ const turn = (model: number[][]): void => {
 //////////// <--------> ////////////>- POSITION TO BLOCK REFFERENCE -<//////////// <--------> ////////////
 
 const positionsY: number[] = []
-for (let i = 0; i <= arenaHeight * scale; i += scale) {
+for (let i = 0; i <= ARENA_HEIGHT * SCALE; i += SCALE) {
     positionsY.push(i)
 }
 const getPosY = (y: number): number => {
@@ -482,12 +504,12 @@ const getPosY = (y: number): number => {
     }
 }
 const posMapY: Map<number, number> = new Map<number, number>()
-for (let i = 0; i < arenaHeight * scale; i++) {
+for (let i = 0; i < ARENA_HEIGHT * SCALE; i++) {
     posMapY.set(i, getPosY(i))
 }
 
 const positionsX: number[] = []
-for (let i = 0; i <= arenaWidth * scale; i += scale) {
+for (let i = 0; i <= ARENA_WIDTH * SCALE; i += SCALE) {
     positionsX.push(i)
 }
 const getPosX = (x: number): number => {
@@ -498,7 +520,7 @@ const getPosX = (x: number): number => {
     }
 }
 const posMapX: Map<number, number> = new Map<number, number>()
-for (let i = 0; i < arenaWidth * scale; i++) {
+for (let i = 0; i < ARENA_WIDTH * SCALE; i++) {
     posMapX.set(i, getPosX(i))
 }
 
@@ -528,7 +550,7 @@ const fixedWalkingCollision = (dir: number, matrix: number[][]): number => {
 }
 
 const fixedScale = (dir: number): number => {
-    if (dir > 0) return scale - 1
+    if (dir > 0) return SCALE - 1
     if (dir < 0) return -2
 }
 
@@ -554,7 +576,7 @@ const gravity: VoidFunction = (): void => {
 
         if (!collide({ y: entity.pos.y + entity.matrix.length, x: entity.pos.x })) {
             if (!entity.gravityActive) return
-            if (entity.lastpos.x === 0 && !collide({ y: entity.pos.y + scale, x: entity.pos.x - 3 + scale })) {
+            if (entity.lastpos.x === 0 && !collide({ y: entity.pos.y + SCALE, x: entity.pos.x - 3 + SCALE })) {
                 entity.pos.y++
                 entity.falling = true
             } else {
@@ -597,7 +619,7 @@ const clearJump = (entity: Entity): void => {
 
 const doJump = (entity: Entity): void => {
     if (entity == null) return
-    const endJump: number = jump * Math.floor(scale * 0.75)
+    const endJump: number = jump * Math.floor(SCALE * 0.75)
     entity.falling = true
 
     if (entity.jumpCounter === 0) {
@@ -614,7 +636,7 @@ const doJump = (entity: Entity): void => {
     if (entity.jumpCounter > 0) entity.timeout = setTimeout(() => doJump(entity), jumpFrequency)
 
     if (!collide({ y: entity.pos.y - 2, x: entity.pos.x })
-        && !collide({ y: entity.pos.y - 2, x: entity.pos.x + scale - 4 })) {
+        && !collide({ y: entity.pos.y - 2, x: entity.pos.x + SCALE - 4 })) {
         entity.pos.y -= 2
     } else entity.jumpCounter = endJump
 }
@@ -631,7 +653,7 @@ const entityMove = (dir: number, entity: Entity): void => {
         return
     }
     if (!collide({ y: entity.pos.y, x: entity.pos.x + fixedWalkingCollision(dir, entity.matrix) })) {
-        if (entity.pos.x >= arenaWidth * scale - entity.matrix[0].length - 2) {
+        if (entity.pos.x >= ARENA_WIDTH * SCALE - entity.matrix[0].length - 2) {
             entity.pos.x--
             if (entity instanceof Enemy) {
                 entity.direction = !entity.direction
@@ -657,8 +679,8 @@ const entityMove = (dir: number, entity: Entity): void => {
             && entity.pos.y <= player.pos.y + 40 && entity.pos.y >= player.pos.y - 40)
             doJump(entity)
 
-        if (dir < 0 && collide({ y: entity.pos.y + scale, x: entity.pos.x })
-            && !collide({ y: entity.pos.y + scale, x: entity.pos.x - scale })) {
+        if (dir < 0 && collide({ y: entity.pos.y + SCALE, x: entity.pos.x })
+            && !collide({ y: entity.pos.y + SCALE, x: entity.pos.x - SCALE })) {
             entity.lastpos.x = entity.pos.x
             entity.lastpos.y = entity.pos.y
         }
@@ -772,9 +794,9 @@ const headpop = (e: Entity, player: Player): void => {
 const gen = (x1: number, x2: number, y1: number, y2: number, color?: number): void => {
     if (x1 > x2 || y1 > y2) return
     if (x1 < 0) x1 = 0
-    if (x2 > arenaWidth) x2 = arenaWidth
+    if (x2 > ARENA_WIDTH) x2 = ARENA_WIDTH
     if (y1 < 0) y1 = 0
-    if (y2 > arenaHeight) y2 = arenaHeight
+    if (y2 > ARENA_HEIGHT) y2 = ARENA_HEIGHT
     for (let y = y1; y < y2; y++) {
         for (let x = x1; x < x2; x++) {
             if (color != null) {
@@ -790,22 +812,22 @@ const gen = (x1: number, x2: number, y1: number, y2: number, color?: number): vo
 
 const hole = (x1: number, x2: number): void => {
     for (let x = x1; x < x2; x++) {
-        arena[arenaHeight - 1][x] = 0
+        arena[ARENA_HEIGHT - 1][x] = 0
     }
 }
 
 //////////// <--------> ////////////>- FLOOR GENERATOR -<//////////// <--------> ////////////
 
-const floor: VoidFunction = (): void => gen(0, arenaWidth, arenaHeight - 1, arenaHeight)
+const floor: VoidFunction = (): void => gen(0, ARENA_WIDTH, ARENA_HEIGHT - 1, ARENA_HEIGHT)
 
 //////////// <--------> ////////////>- REMOVING ARENA BLOCKS -<//////////// <--------> ////////////
 
 const pass = (x1: number, x2: number, y1: number, y2: number): void => {
     if (x1 > x2 || y1 > y2) return
     if (x1 < 0) x1 = 0
-    if (x2 > arenaWidth) x2 = arenaWidth
+    if (x2 > ARENA_WIDTH) x2 = ARENA_WIDTH
     if (y1 < 0) y1 = 0
-    if (y2 > arenaHeight) y2 = arenaHeight
+    if (y2 > ARENA_HEIGHT) y2 = ARENA_HEIGHT
     for (let y = y1; y < y2; y++) {
         for (let x = x1; x < x2; x++) {
             arena[y][x] = 0
@@ -1024,7 +1046,7 @@ const nextLevel = (lost?: boolean): void => {
 //////////// <--------> ////////////>- CHECK NEXT LEVEL CONDITIONS -<//////////// <--------> ////////////
 
 const levelCheck = (): void => {
-    const border: number = arenaWidth * scale - player.matrix[0].length - player.speed
+    const border: number = ARENA_WIDTH * SCALE - player.matrix[0].length - player.speed
     if (level === 1 && player.pos.x >= border) {
         level++
         nextLevel()
@@ -1094,7 +1116,7 @@ const fpsCounterReset: VoidFunction = (): void => {
 
 let timer: number = 0
 const time: VoidFunction = (): void => void timer++
-let runningTimer: number | any = null
+let runningTimer: number = null
 
 const drawEntities: VoidFunction = (): void => {
     entities.forEach((e: Entity): void => {
@@ -1127,6 +1149,15 @@ window.addEventListener("keyup", (e: KeyboardEvent) => {
 
     if (e.key === "a") playerEntity.walking1 = false
     if (e.key === "d") playerEntity.walking2 = false
+})
+
+canvas.addEventListener("touchstart", (e: TouchEvent): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    for (let i = 0; i < e.touches.length; i++) {
+        if (e.touches[i].clientX > canvas.width / 2 && !playerEntity.falling) doJump(playerEntity)
+    }
 })
 
 //////////// <--------> ////////////>- GENERAL RENDERING FUNCTION -<//////////// <--------> ////////////
