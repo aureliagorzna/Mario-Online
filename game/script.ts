@@ -1213,7 +1213,7 @@ if (jumpButton != null) jumpButton.addEventListener("click", (): void => {
     if (!playerEntity.falling) doJump(playerEntity)
 })
 
-moveLeftButton.addEventListener("mousedown", (): void => {
+if (moveLeftButton != null) moveLeftButton.addEventListener("mousedown", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
@@ -1223,7 +1223,7 @@ moveLeftButton.addEventListener("mousedown", (): void => {
 
 })
 
-moveRightButton.addEventListener("mousedown", (): void => {
+if (moveRightButton != null) moveRightButton.addEventListener("mousedown", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
@@ -1233,28 +1233,28 @@ moveRightButton.addEventListener("mousedown", (): void => {
 
 })
 
-moveLeftButton.addEventListener("mouseup", (): void => {
+if (moveLeftButton != null) moveLeftButton.addEventListener("mouseup", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     playerEntity.walking1 = false
 })
 
-moveRightButton.addEventListener("mouseup", (): void => {
+if (moveRightButton != null) moveRightButton.addEventListener("mouseup", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     playerEntity.walking2 = false
 })
 
-moveLeftButton.addEventListener("mouseleave", (): void => {
+if (moveLeftButton != null) moveLeftButton.addEventListener("mouseleave", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     playerEntity.walking1 = false
 })
 
-moveRightButton.addEventListener("mouseleave", (): void => {
+if (moveRightButton != null) moveRightButton.addEventListener("mouseleave", (): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 

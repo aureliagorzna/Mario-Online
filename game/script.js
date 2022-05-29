@@ -1070,48 +1070,54 @@ if (jumpButton != null)
         if (!playerEntity.falling)
             doJump(playerEntity);
     });
-moveLeftButton.addEventListener("mousedown", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    if (playerEntity.lastDir)
-        turn(playerEntity.matrix);
-    playerEntity.walking1 = true;
-    playerEntity.lastDir = false;
-});
-moveRightButton.addEventListener("mousedown", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    if (!playerEntity.lastDir)
-        turn(playerEntity.matrix);
-    playerEntity.walking2 = true;
-    playerEntity.lastDir = true;
-});
-moveLeftButton.addEventListener("mouseup", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    playerEntity.walking1 = false;
-});
-moveRightButton.addEventListener("mouseup", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    playerEntity.walking2 = false;
-});
-moveLeftButton.addEventListener("mouseleave", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    playerEntity.walking1 = false;
-});
-moveRightButton.addEventListener("mouseleave", () => {
-    const playerEntity = Entity.getEntity(player);
-    if (runningTimer == null)
-        runningTimer = setInterval(time, 100);
-    playerEntity.walking2 = false;
-});
+if (moveLeftButton != null)
+    moveLeftButton.addEventListener("mousedown", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        if (playerEntity.lastDir)
+            turn(playerEntity.matrix);
+        playerEntity.walking1 = true;
+        playerEntity.lastDir = false;
+    });
+if (moveRightButton != null)
+    moveRightButton.addEventListener("mousedown", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        if (!playerEntity.lastDir)
+            turn(playerEntity.matrix);
+        playerEntity.walking2 = true;
+        playerEntity.lastDir = true;
+    });
+if (moveLeftButton != null)
+    moveLeftButton.addEventListener("mouseup", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        playerEntity.walking1 = false;
+    });
+if (moveRightButton != null)
+    moveRightButton.addEventListener("mouseup", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        playerEntity.walking2 = false;
+    });
+if (moveLeftButton != null)
+    moveLeftButton.addEventListener("mouseleave", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        playerEntity.walking1 = false;
+    });
+if (moveRightButton != null)
+    moveRightButton.addEventListener("mouseleave", () => {
+        const playerEntity = Entity.getEntity(player);
+        if (runningTimer == null)
+            runningTimer = setInterval(time, 100);
+        playerEntity.walking2 = false;
+    });
 //////////// <--------> ////////////>- GENERAL RENDERING FUNCTION -<//////////// <--------> ////////////
 const render = () => {
     fillBackground();
