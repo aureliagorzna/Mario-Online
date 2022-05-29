@@ -173,8 +173,6 @@ const bossLife = 4; /* Boss life - sets the amount of life of the boss */
 let entities = [];
 const WIDTH = 1200;
 let ZOOM = round(window.innerWidth / 850);
-if (window.innerWidth < 1000)
-    ZOOM *= 0.8;
 let DISPLAY_WIDTH = WIDTH * ZOOM / 2;
 let DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
 const SCALE = 15;

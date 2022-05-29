@@ -185,7 +185,6 @@ let entities: Entity[] = []
 
 const WIDTH: number = 1200
 let ZOOM: number = round(window.innerWidth / 850)
-if (window.innerWidth < 1000) ZOOM *= 0.8
 let DISPLAY_WIDTH: number = WIDTH * ZOOM / 2
 let DISPLAY_HEIGHT: number = WIDTH * 0.625 * ZOOM / 2
 const SCALE: number = 15
