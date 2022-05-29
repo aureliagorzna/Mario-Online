@@ -238,6 +238,7 @@ class Player extends Entity {
         this.lastDir = true;
         this.leftTouch = false;
         this.rightTouch = false;
+        this.mobileJump = false;
     }
 }
 class Enemy extends Entity {
@@ -588,6 +589,8 @@ const physics = () => {
                 entityMove(-player.speed, player);
             if (e.walking2)
                 entityMove(player.speed, player);
+            if (e.mobileJump && !e.falling)
+                doJump(e);
         }
         if (e instanceof Enemy) {
             const enemy = Entity.getEntity(e);
@@ -1026,7 +1029,7 @@ window.addEventListener("touchstart", (e) => {
         const x = e.touches[i].clientX;
         //jump
         if (x > window.innerWidth / 2 && !playerEntity.falling)
-            doJump(playerEntity);
+            playerEntity.mobileJump = true;
         //left
         if (x < window.innerWidth / 4) {
             if (playerEntity.lastDir)
@@ -1047,6 +1050,10 @@ window.addEventListener("touchstart", (e) => {
 });
 window.addEventListener("touchend", (e) => {
     const playerEntity = Entity.getEntity(player);
+    if (playerEntity.mobileJump) {
+        playerEntity.mobileJump = false;
+        return;
+    }
     if (playerEntity.leftTouch) {
         playerEntity.walking1 = false;
         playerEntity.leftTouch = false;

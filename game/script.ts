@@ -249,6 +249,7 @@ interface PlayerProperties {
     lastDir: boolean
     leftTouch: boolean
     rightTouch: boolean
+    mobileJump: boolean
 }
 
 interface EnemyProperties {
@@ -313,6 +314,7 @@ class Player extends Entity implements PlayerProperties {
     public lastDir: boolean
     public leftTouch: boolean
     public rightTouch: boolean
+    public mobileJump: boolean
 
     constructor(matrix: number[][], pos: Position, speed: number) {
         super(matrix, pos, speed)
@@ -321,6 +323,7 @@ class Player extends Entity implements PlayerProperties {
         this.lastDir = true
         this.leftTouch = false
         this.rightTouch = false
+        this.mobileJump = false
     }
 }
 
@@ -705,6 +708,7 @@ const physics: VoidFunction = (): void => {
             const player: Player = Entity.getEntity(e) as Player
             if (e.walking1) entityMove(-player.speed, player)
             if (e.walking2) entityMove(player.speed, player)
+            if (e.mobileJump && !e.falling) doJump(e)
         }
         if (e instanceof Enemy) {
             const enemy: Enemy = Entity.getEntity(e) as Enemy
@@ -1166,7 +1170,7 @@ window.addEventListener("touchstart", (e: TouchEvent): void => {
         const x: number = e.touches[i].clientX
 
         //jump
-        if (x > window.innerWidth / 2 && !playerEntity.falling) doJump(playerEntity)
+        if (x > window.innerWidth / 2 && !playerEntity.falling) playerEntity.mobileJump = true
 
         //left
         if (x < window.innerWidth / 4) {
@@ -1188,6 +1192,11 @@ window.addEventListener("touchstart", (e: TouchEvent): void => {
 
 window.addEventListener("touchend", (e: TouchEvent): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
+
+    if (playerEntity.mobileJump) {
+        playerEntity.mobileJump = false
+        return
+    }
 
     if (playerEntity.leftTouch) {
         playerEntity.walking1 = false
