@@ -1,16 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
 * {
     margin: 0;
     padding: 0;
+    font-family: Poppins;
+    font-weight: bold;
+    font-size: 1.5rem;
+    user-select: none;
 }
 
 body {
     background-color: rgb(33, 33, 33);
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 canvas {
     box-shadow: 0 0 10px 2px white;
     margin-top: 30px;
+}
+
+.instruction-move {
+    width: 25%;
+    border-left: solid 1px white;
+    border-right: solid 1px white;
+    background-color: rgb(50, 52, 52);
+}
+
+.instruction-jump {
+    width: 50%;
+    border: 10px 10px 10px 10px purple;
+    border-left: solid 1px white;
+    border-right: solid 1px white;
+    background-color: rgb(50, 52, 52);
+}
+
+.instructions-wrapper {
+    width: 100%;
+    display: flex;
+    text-align: center;
+    color: white;
+}
+
+.canvas-wrapper {
+    text-align: center;
+    width: 100%;
 }

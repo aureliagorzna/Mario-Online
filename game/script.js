@@ -222,7 +222,9 @@ class Entity {
         this.timeout = null;
         this.speed = speed;
         this.turned = false;
-        this.remove = () => { entities = entities.filter((e) => e !== this); };
+    }
+    remove() {
+        entities = entities.filter((e) => e !== this);
     }
     static getEntity(entity) {
         return entities[entities.indexOf(entity)];
@@ -234,6 +236,8 @@ class Player extends Entity {
         this.walking1 = false;
         this.walking2 = false;
         this.lastDir = true;
+        this.leftTouch = false;
+        this.rightTouch = false;
     }
 }
 class Enemy extends Entity {
@@ -1014,14 +1018,95 @@ window.addEventListener("keyup", (e) => {
     if (e.key === "d")
         playerEntity.walking2 = false;
 });
-canvas.addEventListener("touchstart", (e) => {
+window.addEventListener("touchstart", (e) => {
     const playerEntity = Entity.getEntity(player);
     if (runningTimer == null)
         runningTimer = setInterval(time, 100);
     for (let i = 0; i < e.touches.length; i++) {
-        if (e.touches[i].clientX > canvas.width / 2 && !playerEntity.falling)
+        const x = e.touches[i].clientX;
+        //jump
+        if (x > window.innerWidth / 2 && !playerEntity.falling)
             doJump(playerEntity);
+        //left
+        if (x < window.innerWidth / 4) {
+            if (playerEntity.lastDir)
+                turn(playerEntity.matrix);
+            playerEntity.walking1 = true;
+            playerEntity.lastDir = false;
+            playerEntity.leftTouch = true;
+        }
+        //right
+        if (x > window.innerWidth / 4 && x < window.innerWidth / 2) {
+            if (!playerEntity.lastDir)
+                turn(playerEntity.matrix);
+            playerEntity.walking2 = true;
+            playerEntity.lastDir = true;
+            playerEntity.rightTouch = true;
+        }
     }
+});
+window.addEventListener("touchend", (e) => {
+    const playerEntity = Entity.getEntity(player);
+    if (playerEntity.leftTouch) {
+        playerEntity.walking1 = false;
+        playerEntity.leftTouch = false;
+    }
+    if (playerEntity.rightTouch) {
+        playerEntity.walking2 = false;
+        playerEntity.rightTouch = false;
+    }
+});
+const jumpButton = document.querySelector(".instruction-jump");
+const moveLeftButton = document.querySelector("#move-left");
+const moveRightButton = document.querySelector("#move-right");
+jumpButton.addEventListener("click", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    if (!playerEntity.falling)
+        doJump(playerEntity);
+});
+moveLeftButton.addEventListener("mousedown", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    if (playerEntity.lastDir)
+        turn(playerEntity.matrix);
+    playerEntity.walking1 = true;
+    playerEntity.lastDir = false;
+});
+moveRightButton.addEventListener("mousedown", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    if (!playerEntity.lastDir)
+        turn(playerEntity.matrix);
+    playerEntity.walking2 = true;
+    playerEntity.lastDir = true;
+});
+moveLeftButton.addEventListener("mouseup", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking1 = false;
+});
+moveRightButton.addEventListener("mouseup", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking2 = false;
+});
+moveLeftButton.addEventListener("mouseleave", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking1 = false;
+});
+moveRightButton.addEventListener("mouseleave", () => {
+    const playerEntity = Entity.getEntity(player);
+    if (runningTimer == null)
+        runningTimer = setInterval(time, 100);
+    playerEntity.walking2 = false;
 });
 //////////// <--------> ////////////>- GENERAL RENDERING FUNCTION -<//////////// <--------> ////////////
 const render = () => {

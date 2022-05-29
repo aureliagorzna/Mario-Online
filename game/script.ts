@@ -241,13 +241,14 @@ interface EntityProperties {
     timeout: ReturnType<typeof setTimeout>
     speed: number
     turned: boolean
-    remove: VoidFunction
 }
 
 interface PlayerProperties {
     walking1: boolean
     walking2: boolean
     lastDir: boolean
+    leftTouch: boolean
+    rightTouch: boolean
 }
 
 interface EnemyProperties {
@@ -283,7 +284,6 @@ class Entity implements EntityProperties {
     public timeout: ReturnType<typeof setTimeout>
     public speed: number
     public turned: boolean
-    public remove: VoidFunction
 
     constructor(matrix: number[][], pos: Position, speed?: number) {
         if (level === 7) this.matrix = JSON.parse(JSON.stringify(matrix))
@@ -296,7 +296,10 @@ class Entity implements EntityProperties {
         this.timeout = null
         this.speed = speed
         this.turned = false
-        this.remove = (): void => { entities = entities.filter((e: Entity) => e !== this) }
+    }
+
+    public remove() {
+        entities = entities.filter((e: Entity) => e !== this)
     }
 
     public static getEntity(entity: Entity): Entity {
@@ -308,12 +311,16 @@ class Player extends Entity implements PlayerProperties {
     public walking1: boolean
     public walking2: boolean
     public lastDir: boolean
+    public leftTouch: boolean
+    public rightTouch: boolean
 
     constructor(matrix: number[][], pos: Position, speed: number) {
         super(matrix, pos, speed)
         this.walking1 = false
         this.walking2 = false
         this.lastDir = true
+        this.leftTouch = false
+        this.rightTouch = false
     }
 }
 
@@ -1156,8 +1163,99 @@ window.addEventListener("touchstart", (e: TouchEvent): void => {
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     for (let i = 0; i < e.touches.length; i++) {
-        if (e.touches[i].clientX > window.innerWidth / 2 && !playerEntity.falling) doJump(playerEntity)
+        const x: number = e.touches[i].clientX
+
+        //jump
+        if (x > window.innerWidth / 2 && !playerEntity.falling) doJump(playerEntity)
+
+        //left
+        if (x < window.innerWidth / 4) {
+            if (playerEntity.lastDir) turn(playerEntity.matrix)
+            playerEntity.walking1 = true
+            playerEntity.lastDir = false
+            playerEntity.leftTouch = true
+        }
+
+        //right
+        if (x > window.innerWidth / 4 && x < window.innerWidth / 2) {
+            if (!playerEntity.lastDir) turn(playerEntity.matrix)
+            playerEntity.walking2 = true
+            playerEntity.lastDir = true
+            playerEntity.rightTouch = true
+        }
     }
+})
+
+window.addEventListener("touchend", (e: TouchEvent): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+
+    if (playerEntity.leftTouch) {
+        playerEntity.walking1 = false
+        playerEntity.leftTouch = false
+    }
+    if (playerEntity.rightTouch) {
+        playerEntity.walking2 = false
+        playerEntity.rightTouch = false
+    }
+})
+
+const jumpButton: HTMLDivElement = document.querySelector(".instruction-jump")
+const moveLeftButton: HTMLDivElement = document.querySelector("#move-left")
+const moveRightButton: HTMLDivElement = document.querySelector("#move-right")
+
+jumpButton.addEventListener("click", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    if (!playerEntity.falling) doJump(playerEntity)
+})
+
+moveLeftButton.addEventListener("mousedown", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    if (playerEntity.lastDir) turn(playerEntity.matrix)
+    playerEntity.walking1 = true
+    playerEntity.lastDir = false
+
+})
+
+moveRightButton.addEventListener("mousedown", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    if (!playerEntity.lastDir) turn(playerEntity.matrix)
+    playerEntity.walking2 = true
+    playerEntity.lastDir = true
+
+})
+
+moveLeftButton.addEventListener("mouseup", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    playerEntity.walking1 = false
+})
+
+moveRightButton.addEventListener("mouseup", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    playerEntity.walking2 = false
+})
+
+moveLeftButton.addEventListener("mouseleave", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    playerEntity.walking1 = false
+})
+
+moveRightButton.addEventListener("mouseleave", (): void => {
+    const playerEntity: Player = Entity.getEntity(player) as Player
+    if (runningTimer == null) runningTimer = setInterval(time, 100)
+
+    playerEntity.walking2 = false
 })
 
 //////////// <--------> ////////////>- GENERAL RENDERING FUNCTION -<//////////// <--------> ////////////
