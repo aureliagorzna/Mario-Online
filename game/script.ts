@@ -389,6 +389,8 @@ class Misc extends Entity implements MiscProperties {
     }
 }
 
+const player: Player = new Player(mario, { y: 343, x: 32 }, speed)
+
 //////////// <--------> ////////////>- TEXT DRAWING -<//////////// <--------> ////////////
 
 const text: VoidFunction = (): void => {
@@ -1279,8 +1281,6 @@ const run: VoidFunction = (): void => {
     nextLevel()
     entities.push(player)
 }
-
-const player: Player = new Player(mario, { y: 343, x: 32 }, speed)
 
 run()
 render()

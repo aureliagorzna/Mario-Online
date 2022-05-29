@@ -290,6 +290,7 @@ class Misc extends Entity {
         this.gravityActive = false;
     }
 }
+const player = new Player(mario, { y: 343, x: 32 }, speed);
 //////////// <--------> ////////////>- TEXT DRAWING -<//////////// <--------> ////////////
 const text = () => {
     ctx.textAlign = "left";
@@ -1127,7 +1128,6 @@ const run = () => {
     nextLevel();
     entities.push(player);
 };
-const player = new Player(mario, { y: 343, x: 32 }, speed);
 run();
 render();
 setInterval(fpsCounterReset, 1000);
