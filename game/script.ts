@@ -238,7 +238,7 @@ interface EntityProperties {
     gravityActive: boolean
     jumpCounter: number
     lastpos: Position
-    timeout: number
+    timeout: ReturnType<typeof setTimeout>
     speed: number
     turned: boolean
     remove: VoidFunction
@@ -280,7 +280,7 @@ class Entity implements EntityProperties {
     public gravityActive: boolean
     public jumpCounter: number
     public lastpos: Position
-    public timeout: number
+    public timeout: ReturnType<typeof setTimeout>
     public speed: number
     public turned: boolean
     public remove: VoidFunction
@@ -1116,7 +1116,7 @@ const fpsCounterReset: VoidFunction = (): void => {
 
 let timer: number = 0
 const time: VoidFunction = (): void => void timer++
-let runningTimer: number = null
+let runningTimer: ReturnType<typeof setInterval> = null
 
 const drawEntities: VoidFunction = (): void => {
     entities.forEach((e: Entity): void => {
@@ -1151,12 +1151,12 @@ window.addEventListener("keyup", (e: KeyboardEvent) => {
     if (e.key === "d") playerEntity.walking2 = false
 })
 
-canvas.addEventListener("touchstart", (e: TouchEvent): void => {
+window.addEventListener("touchstart", (e: TouchEvent): void => {
     const playerEntity: Player = Entity.getEntity(player) as Player
     if (runningTimer == null) runningTimer = setInterval(time, 100)
 
     for (let i = 0; i < e.touches.length; i++) {
-        if (e.touches[i].clientX > canvas.width / 2 && !playerEntity.falling) doJump(playerEntity)
+        if (e.touches[i].clientX > window.innerWidth / 2 && !playerEntity.falling) doJump(playerEntity)
     }
 })
 
