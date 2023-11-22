@@ -1,9 +1,38 @@
 const canvas: HTMLCanvasElement = document.querySelector("canvas")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")
 
+let level: number = 1                   /* Starting level */
+const targetFps: number = 120           /* Target FPS - limiting this number may improve the performance */
+const gameRefreshRate: number = 120     /* Game Refresh Rate - increasing this number will speed the game up */
+const background: string = "#feefd2"    /* Background color - sets the background color with given rgb/hsl/hex code */
+const gravityForce: number = 10         /* Gravity Force - indicates the falling rate */
+const speed: number = 2                 /* Speed - default player speed */
+const jump: number = 2                  /* Jump - default player jump measured in blocks */
+const bossLife: number = 4              /* Boss life - sets the amount of life of the boss */
+let entities: Entity[] = []
+
+const WIDTH: number = 1200
+let ZOOM: number = round(window.innerWidth / 850)
+let DISPLAY_WIDTH: number = WIDTH * ZOOM / 2
+let DISPLAY_HEIGHT: number = WIDTH * 0.625 * ZOOM / 2
+const SCALE: number = 15
+
+const ARENA_WIDTH: number = Math.ceil((DISPLAY_WIDTH / ZOOM) / SCALE)
+const ARENA_HEIGHT: number = Math.ceil((DISPLAY_HEIGHT / ZOOM) / SCALE)
+
+canvas.width = DISPLAY_WIDTH
+canvas.height = DISPLAY_HEIGHT
+ctx.scale(ZOOM, ZOOM)
+
+window.addEventListener("resize", () => {
+    ZOOM = round(window.innerWidth / 850) * 0.8
+    DISPLAY_WIDTH = WIDTH * ZOOM / 2
+    DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2
+})
+
 //////////// <--------> ////////////>- ROUNDING FUNCTION -<//////////// <--------> ////////////
 
-const round = (number: number): number => {
+function round (number: number): number {
     const numberString: string = number.toString()
     const dotIndex: number = numberString.indexOf(".")
     const intLength: number = numberString.substring(0, dotIndex).length
@@ -172,35 +201,6 @@ const heart: number[][] = [
     [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
 ]
-
-let level: number = 1                   /* Starting level */
-const targetFps: number = 120           /* Target FPS - limiting this number may improve the performance */
-const gameRefreshRate: number = 120     /* Game Refresh Rate - increasing this number will speed the game up */
-const background: string = "#feefd2"    /* Background color - sets the background color with given rgb/hsl/hex code */
-const gravityForce: number = 10         /* Gravity Force - indicates the falling rate */
-const speed: number = 2                 /* Speed - default player speed */
-const jump: number = 2                  /* Jump - default player jump measured in blocks */
-const bossLife: number = 4              /* Boss life - sets the amount of life of the boss */
-let entities: Entity[] = []
-
-const WIDTH: number = 1200
-let ZOOM: number = round(window.innerWidth / 850)
-let DISPLAY_WIDTH: number = WIDTH * ZOOM / 2
-let DISPLAY_HEIGHT: number = WIDTH * 0.625 * ZOOM / 2
-const SCALE: number = 15
-
-const ARENA_WIDTH: number = Math.ceil((DISPLAY_WIDTH / ZOOM) / SCALE)
-const ARENA_HEIGHT: number = Math.ceil((DISPLAY_HEIGHT / ZOOM) / SCALE)
-
-canvas.width = DISPLAY_WIDTH
-canvas.height = DISPLAY_HEIGHT
-ctx.scale(ZOOM, ZOOM)
-
-window.addEventListener("resize", () => {
-    ZOOM = round(window.innerWidth / 850) * 0.8
-    DISPLAY_WIDTH = WIDTH * ZOOM / 2
-    DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2
-})
 
 //////////// <--------> ////////////>- COLOR PALETTE -<//////////// <--------> ////////////
 

@@ -1,8 +1,31 @@
-"use strict";
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+let level = 1; /* Starting level */
+const targetFps = 120; /* Target FPS - limiting this number may improve the performance */
+const gameRefreshRate = 120; /* Game Refresh Rate - increasing this number will speed the game up */
+const background = "#feefd2"; /* Background color - sets the background color with given rgb/hsl/hex code */
+const gravityForce = 10; /* Gravity Force - indicates the falling rate */
+const speed = 2; /* Speed - default player speed */
+const jump = 2; /* Jump - default player jump measured in blocks */
+const bossLife = 4; /* Boss life - sets the amount of life of the boss */
+let entities = [];
+const WIDTH = 1200;
+let ZOOM = round(window.innerWidth / 850);
+let DISPLAY_WIDTH = WIDTH * ZOOM / 2;
+let DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
+const SCALE = 15;
+const ARENA_WIDTH = Math.ceil((DISPLAY_WIDTH / ZOOM) / SCALE);
+const ARENA_HEIGHT = Math.ceil((DISPLAY_HEIGHT / ZOOM) / SCALE);
+canvas.width = DISPLAY_WIDTH;
+canvas.height = DISPLAY_HEIGHT;
+ctx.scale(ZOOM, ZOOM);
+window.addEventListener("resize", () => {
+    ZOOM = round(window.innerWidth / 850) * 0.8;
+    DISPLAY_WIDTH = WIDTH * ZOOM / 2;
+    DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
+});
 //////////// <--------> ////////////>- ROUNDING FUNCTION -<//////////// <--------> ////////////
-const round = (number) => {
+function round(number) {
     const numberString = number.toString();
     const dotIndex = numberString.indexOf(".");
     const intLength = numberString.substring(0, dotIndex).length;
@@ -13,7 +36,7 @@ const round = (number) => {
     else
         roundedString = numberString;
     return parseFloat(roundedString);
-};
+}
 const mario = [
     [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -163,30 +186,6 @@ const heart = [
     [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
 ];
-let level = 1; /* Starting level */
-const targetFps = 120; /* Target FPS - limiting this number may improve the performance */
-const gameRefreshRate = 120; /* Game Refresh Rate - increasing this number will speed the game up */
-const background = "#feefd2"; /* Background color - sets the background color with given rgb/hsl/hex code */
-const gravityForce = 10; /* Gravity Force - indicates the falling rate */
-const speed = 2; /* Speed - default player speed */
-const jump = 2; /* Jump - default player jump measured in blocks */
-const bossLife = 4; /* Boss life - sets the amount of life of the boss */
-let entities = [];
-const WIDTH = 1200;
-let ZOOM = round(window.innerWidth / 850);
-let DISPLAY_WIDTH = WIDTH * ZOOM / 2;
-let DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
-const SCALE = 15;
-const ARENA_WIDTH = Math.ceil((DISPLAY_WIDTH / ZOOM) / SCALE);
-const ARENA_HEIGHT = Math.ceil((DISPLAY_HEIGHT / ZOOM) / SCALE);
-canvas.width = DISPLAY_WIDTH;
-canvas.height = DISPLAY_HEIGHT;
-ctx.scale(ZOOM, ZOOM);
-window.addEventListener("resize", () => {
-    ZOOM = round(window.innerWidth / 850) * 0.8;
-    DISPLAY_WIDTH = WIDTH * ZOOM / 2;
-    DISPLAY_HEIGHT = WIDTH * 0.625 * ZOOM / 2;
-});
 //////////// <--------> ////////////>- COLOR PALETTE -<//////////// <--------> ////////////
 const modelColor = [
     "",

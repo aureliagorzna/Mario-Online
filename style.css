@@ -5,7 +5,6 @@
     padding: 0;
     font-family: Poppins;
     font-weight: bold;
-    font-size: 1.5rem;
     user-select: none;
 }
 
@@ -15,32 +14,42 @@ body {
 
 canvas {
     box-shadow: 0 0 10px 2px white;
-    margin-top: 30px;
-}
-
-.instruction-move {
-    width: 25%;
-    border-left: solid 1px white;
-    border-right: solid 1px white;
-    background-color: rgb(50, 52, 52);
-}
-
-.instruction-jump {
-    width: 50%;
-    border: 10px 10px 10px 10px purple;
-    border-left: solid 1px white;
-    border-right: solid 1px white;
-    background-color: rgb(50, 52, 52);
-}
-
-.instructions-wrapper {
-    width: 100%;
-    display: flex;
-    text-align: center;
-    color: white;
+    margin-top: 1vh;
+    max-width: 90vw;
+    max-height: 85vh;
 }
 
 .canvas-wrapper {
     text-align: center;
     width: 100%;
+}
+
+.instructions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    height: 10vh;
+    font-size: 5vh;
+}
+
+.instruction {
+    border-left: solid 1px white;
+    border-right: solid 1px white;
+    background-color: rgb(50, 52, 52);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 20px;
+}
+
+.instruction-move {
+    width: 25%;
+}
+
+.instruction-jump {
+    width: 50%;
 }
