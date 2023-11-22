@@ -1,3 +1,3 @@
-How to play the game
-- download and open the game/index.html file
+-[PLAY](https://aureliagorzna.github.io/Mario-Parkour/)
+
 - movement instructions in game :)
